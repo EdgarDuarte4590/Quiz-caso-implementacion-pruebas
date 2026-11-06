@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('grupo_id')->constrained('grupos')->cascadeOnDelete();
             $table->foreignId('estudiante_id')->constrained('estudiantes')->cascadeOnDelete();
-            $table->float('nota');
+            $table->float('nota')->nullable();
             $table->timestamps();
         });
     }

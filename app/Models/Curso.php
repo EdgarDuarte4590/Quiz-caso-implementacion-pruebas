@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,5 +20,15 @@ class Curso extends Model
     public function grupos(): HasMany
     {
         return $this->hasMany(Grupo::class);
+    }
+
+    public function gruposAbiertos(): HasMany
+    {
+        return $this->hasMany(Grupo::class)->where('abierto', true);
+    }
+
+    public function listarGruposAbiertos(): Collection
+    {
+        return $this->gruposAbiertos()->get();
     }
 }
