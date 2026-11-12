@@ -8,17 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('estudiante_matriculados', function (Blueprint $table) {
+        Schema::create('estudiantes_matriculados', function (Blueprint $table) {
             $table->id();
             $table->foreignId('grupo_id')->constrained('grupos')->cascadeOnDelete();
             $table->foreignId('estudiante_id')->constrained('estudiantes')->cascadeOnDelete();
             $table->float('nota')->nullable();
             $table->timestamps();
+
+            $table->unique(['grupo_id', 'estudiante_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('estudiante_matriculados');
+        Schema::dropIfExists('estudiantes_matriculados');
     }
 };

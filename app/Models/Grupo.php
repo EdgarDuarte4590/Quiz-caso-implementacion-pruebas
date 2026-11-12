@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use InvalidArgumentException;
 
 class Grupo extends Model
 {
@@ -38,48 +38,29 @@ class Grupo extends Model
 
     public function docentes(): BelongsToMany
     {
-        return $this->belongsToMany(Docente::class, 'docente_grupo')->withTimestamps();
+        return $this->belongsToMany(Docente::class, 'grupo_docente')->withTimestamps();
     }
 
     public function estudiantes(): BelongsToMany
     {
-        return $this->belongsToMany(Estudiante::class, 'estudiante_matriculados')
+        return $this->belongsToMany(Estudiante::class, 'estudiantes_matriculados')
             ->using(EstudianteMatriculado::class)
             ->withPivot('nota')
             ->withTimestamps();
     }
 
-    public function estudiantesMatriculados(): HasMany
+    public function asignarDocente(Docente $d): void
     {
-        return $this->hasMany(EstudianteMatriculado::class);
-    }
-
-    public function asignarCurso($cursoAsignado): void
-    {
-        $this->curso()->associate($cursoAsignado);
-    }
-
-    public function asignarDocente(Docente|int $docente): void
-    {
-        if (is_int($docente)) {
-            $docente = Docente::where('codEmpleado', $docente)
-                ->orWhere('id', $docente)
-                ->firstOrFail();
-        }
-
         if ($this->docentes()->count() >= 2) {
             throw new DomainException('Un grupo no puede tener más de 2 docentes.');
         }
 
-        $this->docentes()->attach($docente->id);
+        $this->docentes()->attach($d->id);
     }
 
     public function puedeAbrirse(): bool
     {
-        $cantidadDocentes = $this->docentes()->count();
-        $cantidadEstudiantes = $this->estudiantes()->count();
-
-        return $cantidadDocentes >= 1 && $cantidadDocentes <= 2 && $cantidadEstudiantes >= 15;
+        return $this->docentes()->count() >= 1 && $this->estudiantes()->count() >= 15;
     }
 
     public function abrir(): void
@@ -89,5 +70,14 @@ class Grupo extends Model
         }
 
         $this->update(['abierto' => true]);
+    }
+
+    public function registrarNota(Estudiante $e, float $nota): void
+    {
+        if ($nota < 0 || $nota > 10) {
+            throw new InvalidArgumentException('La nota debe estar entre 0 y 10.');
+        }
+
+        $this->estudiantes()->updateExistingPivot($e->id, ['nota' => $nota]);
     }
 }

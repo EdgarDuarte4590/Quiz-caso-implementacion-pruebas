@@ -10,7 +10,7 @@ class EstudianteMatriculado extends Pivot
 {
     use HasFactory;
 
-    protected $table = 'estudiante_matriculados';
+    protected $table = 'estudiantes_matriculados';
 
     public $incrementing = true;
 

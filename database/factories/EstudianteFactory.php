@@ -16,7 +16,7 @@ class EstudianteFactory extends Factory
             'carne' => strtoupper(fake()->unique()->bothify('C#?###')),
             'nombre' => fake()->firstName(),
             'apellidos' => fake()->lastName() . ' ' . fake()->lastName(),
-            'docente_id' => Docente::factory(),
+            'consejero_id' => Docente::factory(),
         ];
     }
 }

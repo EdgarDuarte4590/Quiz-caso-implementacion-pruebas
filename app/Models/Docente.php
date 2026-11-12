@@ -19,11 +19,11 @@ class Docente extends Model
 
     public function estudiantes(): HasMany
     {
-        return $this->hasMany(Estudiante::class, 'docente_id');
+        return $this->hasMany(Estudiante::class, 'consejero_id');
     }
 
     public function grupos(): BelongsToMany
     {
-        return $this->belongsToMany(Grupo::class, 'docente_grupo')->withTimestamps();
+        return $this->belongsToMany(Grupo::class, 'grupo_docente')->withTimestamps();
     }
 }
